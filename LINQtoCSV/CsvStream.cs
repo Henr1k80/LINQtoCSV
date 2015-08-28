@@ -290,7 +290,7 @@ namespace LINQtoCSV
             }
         }
 
-        private char[] buffer = new char[4096];
+        private readonly char[] buffer = new char[4096];
         private int pos = 0;
         private int length = 0;
 
