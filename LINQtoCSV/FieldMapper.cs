@@ -77,9 +77,10 @@ namespace LINQtoCSV
 
             tfi.memberInfo = mi;
 
-            if (mi is PropertyInfo)
+	        var propertyInfo = mi as PropertyInfo;
+	        if (propertyInfo != null)
             {
-                tfi.fieldType = ((PropertyInfo)mi).PropertyType;
+                tfi.fieldType = propertyInfo.PropertyType;
             }
             else
             {
@@ -119,7 +120,7 @@ namespace LINQtoCSV
             tfi.index = CsvColumnAttribute.mc_DefaultFieldIndex;
             tfi.name = mi.Name;
             tfi.inputNumberStyle = NumberStyles.Any;
-            tfi.outputFormat = "";
+            tfi.outputFormat = string.Empty;
             tfi.hasColumnAttribute = false;
             tfi.charLength = 0;
 
@@ -229,7 +230,7 @@ namespace LINQtoCSV
             // fields in the range.
 
             int lastFieldIndex = Int32.MinValue;
-            string lastName = "";
+            string lastName = string.Empty;
             foreach(TypeFieldInfo tfi in m_IndexToInfo)
             {
                 if ((tfi.index == lastFieldIndex) && 
@@ -340,10 +341,11 @@ namespace LINQtoCSV
                 string resultString = null;
                 if (objValue != null)
                 {
-                    if ((objValue is IFormattable))
+	                var formattable = objValue as IFormattable;
+	                if ((formattable != null))
                     {
                         resultString =
-                            ((IFormattable)objValue).ToString(
+                            formattable.ToString(
                                 tfi.outputFormat,
                                 m_fileDescription.FileCultureInfo);
                     }
@@ -353,7 +355,7 @@ namespace LINQtoCSV
                     }
                 }
 
-                // -----
+	            // -----
 
                 row.Add(resultString);
             }
@@ -429,11 +431,12 @@ namespace LINQtoCSV
 
             //Loop to the 
             for (int i = 0; i < row.Count; i++) {
-                if (!_mappingIndexes.ContainsKey(i)) {
+	            int mappingIndex;
+	            if (!_mappingIndexes.TryGetValue(i, out mappingIndex)) {
                     continue;
                 }
 
-                m_IndexToInfo[_mappingIndexes[i]] = m_NameToInfo[row[i].Value];
+				m_IndexToInfo[mappingIndex] = m_NameToInfo[row[i].Value];
 
                 if (m_fileDescription.EnforceCsvColumnAttribute && (!m_IndexToInfo[i].hasColumnAttribute)) {
                     // enforcing column attr, but this field/prop has no column attr.
@@ -455,10 +458,8 @@ namespace LINQtoCSV
         /// 
         /// <summary>
         /// Creates an object of type T from the data in row and returns that object.
-        /// 
         /// </summary>
         /// <param name="row"></param>
-        /// <param name="firstRow"></param>
         /// <returns></returns>
         public T ReadObject(IDataRow row, AggregatedException ae) {
             //If there are more columns than the required
@@ -482,10 +483,11 @@ namespace LINQtoCSV
                 TypeFieldInfo tfi;
                 //If there is some index mapping generated and the IgnoreUnknownColums is `true`
                 if (m_fileDescription.IgnoreUnknownColumns && _mappingIndexes.Count > 0) {
-                    if (!_mappingIndexes.ContainsKey(i)) {
+	                int mappingIndex;
+	                if (!_mappingIndexes.TryGetValue(i, out mappingIndex)) {
                         continue;
                     }
-                    tfi = m_IndexToInfo[_mappingIndexes[i]];
+					tfi = m_IndexToInfo[mappingIndex];
                 }
                 else {
                     tfi = m_IndexToInfo[i];
@@ -584,9 +586,10 @@ namespace LINQtoCSV
                             objValue = value;                          
                         }
 
-                        if (tfi.memberInfo is PropertyInfo)
+	                    var propertyInfo = tfi.memberInfo as PropertyInfo;
+	                    if (propertyInfo != null)
                         {
-                            ((PropertyInfo)tfi.memberInfo).SetValue(obj, objValue, null);
+                            propertyInfo.SetValue(obj, objValue, null);
                         }
                         else
                         {
