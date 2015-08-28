@@ -4,10 +4,6 @@ using System.IO;
 
 namespace LINQtoCSV
 {
-
-    /// <summary>
-    /// Summary description for CsvContext
-    /// </summary>
     public class CsvContext
     {
         /// ///////////////////////////////////////////////////////////////////////
@@ -24,8 +20,8 @@ namespace LINQtoCSV
         /// <typeparam name="T">
         /// The records in the returned IEnumerable<T> will be of this type.
         /// </typeparam>
-        /// <param name="stream">
-        /// The data will be read from this stream.
+		/// <param name="fileName">
+        /// The data will be read from this file.
         /// </param>
         /// <param name="fileDescription">
         /// Additional information how the input file is to be interpreted, such as the culture of the input dates.
@@ -133,7 +129,7 @@ namespace LINQtoCSV
             // If we're reading raw data rows, instantiate a T so we return objects
             // of the type specified by the caller.
             // Otherwise, instantiate a DataRow, which also implements IDataRow.
-            IDataRow row = null;
+            IDataRow row;
             if (readingRawDataRows)
             {
                 row = new T() as IDataRow;
@@ -232,7 +228,7 @@ namespace LINQtoCSV
                                                 false,
                                                 fileDescription.TextEncoding))
             {
-                WriteData<T>(values, fileName, sw, fileDescription);
+                WriteData(values, fileName, sw, fileDescription);
             }
         }
 
@@ -240,14 +236,14 @@ namespace LINQtoCSV
             IEnumerable<T> values,
             TextWriter stream) 
         {
-            Write<T>(values, stream, new CsvFileDescription());
+            Write(values, stream, new CsvFileDescription());
         }
 
         public void Write<T>(
             IEnumerable<T> values, 
             string fileName) 
         {
-            Write<T>(values, fileName, new CsvFileDescription());
+            Write(values, fileName, new CsvFileDescription());
         }
 
         public void Write<T>(
@@ -255,7 +251,7 @@ namespace LINQtoCSV
             TextWriter stream,
             CsvFileDescription fileDescription) 
         {
-            WriteData<T>(values, null, stream, fileDescription);
+            WriteData(values, null, stream, fileDescription);
         }
 
         private void WriteData<T>(
@@ -284,16 +280,6 @@ namespace LINQtoCSV
                 fm.WriteObject(obj, row);
                 cs.WriteRow(row, fileDescription.QuoteAllFields);
             }
-        }
-
-        /// ///////////////////////////////////////////////////////////////////////
-        /// CsvContext
-        /// 
-        /// <summary>
-        /// 
-        /// </summary>
-        public CsvContext()
-        {
         }
     }
 }
