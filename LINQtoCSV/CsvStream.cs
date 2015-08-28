@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -14,11 +13,11 @@ namespace LINQtoCSV
     /// </summary>
     internal class CsvStream
     {
-        private TextReader m_instream;
-        private TextWriter m_outStream;
-        private char m_SeparatorChar;
-        private char[] m_SpecialChars;
-        private bool m_IgnoreTrailingSeparatorChar;
+        private readonly TextReader m_instream;
+        private readonly TextWriter m_outStream;
+        private readonly char m_SeparatorChar;
+        private readonly char[] m_SpecialChars;
+        private readonly bool m_IgnoreTrailingSeparatorChar;
 
         // Current line number in the file. Only used when reading a file, not when writing a file.
         private int m_lineNbr;
@@ -32,7 +31,7 @@ namespace LINQtoCSV
             m_outStream = outStream;
             m_SeparatorChar = SeparatorChar;
             m_IgnoreTrailingSeparatorChar = IgnoreTrailingSeparatorChar;
-            m_SpecialChars = ("\"\x0A\x0D" + m_SeparatorChar.ToString()).ToCharArray();
+            m_SpecialChars = ("\"\x0A\x0D" + m_SeparatorChar).ToCharArray();
             m_lineNbr = 1;
         }
 
@@ -105,7 +104,7 @@ namespace LINQtoCSV
                 bool moreAvailable = GetNextItem(ref item, itemLength);
                 if (charactersLength != null)
                 {
-                    if (!(charactersLength.Count() > i + 1))
+                    if (!(charactersLength.Count > i + 1))
                     {
                         if (moreAvailable)
                         {
